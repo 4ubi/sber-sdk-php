@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  tests:
+    name: PHP CS Fixer · Rector · PHPUnit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: openssl, zip, json
+          coverage: pcov
+          tools: composer:v2
+
+      - name: Install dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: PHP CS Fixer (check)
+        run: composer cs
+
+      - name: Rector (check)
+        run: composer rector
+
+      - name: PHPUnit
+        run: vendor/bin/phpunit --coverage-text --colors=never
