@@ -1,0 +1,55 @@
+{
+    "name": "nomokonov/sber-sdk-php",
+    "description": "PHP SDK for Sberbank SberAPI: authorization, H2H direct integration and instant payments. Port of the official Node.js SDK.",
+    "type": "library",
+    "keywords": ["sber", "sberbank", "sberapi", "sdk", "h2h", "payments", "fintech"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexander Nomokonov",
+            "email": "ognomokon@gmail.com",
+            "homepage": "https://github.com/4ubi"
+        }
+    ],
+    "require": {
+        "php": "^8.5",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "ext-zip": "*",
+        "guzzlehttp/guzzle": "^7.9",
+        "psr/log": "^3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12.0",
+        "friendsofphp/php-cs-fixer": "^3.64",
+        "rector/rector": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nomokonov\\SberSdk\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Nomokonov\\SberSdk\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "cs": "php-cs-fixer fix --dry-run --diff",
+        "cs:fix": "php-cs-fixer fix",
+        "rector": "rector process --dry-run",
+        "rector:fix": "rector process",
+        "ci": [
+            "@cs",
+            "@rector",
+            "@test"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

@@ -1,0 +1,13 @@
+/vendor/
+/composer.lock
+/.phpunit.cache/
+/.php-cs-fixer.cache
+/.rector.cache
+/build/
+.DS_Store
+.idea/
+.vscode/
+*.p12
+*.pem
+*.cer
+!certs/*.crt

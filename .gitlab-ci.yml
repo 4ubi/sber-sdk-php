@@ -1,0 +1,62 @@
+# GitLab CI for sber-sdk-php
+# Runs the quality toolchain (PHP CS Fixer, Rector, PHPUnit) on every merge request
+# and on pushes to the default branch.
+
+stages:
+  - prepare
+  - quality
+  - test
+
+default:
+  image: php:8.5-cli
+  before_script:
+    - apt-get update -yqq && apt-get install -yqq git unzip libzip-dev
+    - docker-php-ext-install zip
+    - pecl install pcov && docker-php-ext-enable pcov
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    - php -r "unlink('composer-setup.php');"
+
+# Run the pipeline for merge requests and for the default branch only.
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+variables:
+  COMPOSER_CACHE_DIR: "$CI_PROJECT_DIR/.composer-cache"
+
+cache:
+  key:
+    files:
+      - composer.json
+  paths:
+    - vendor/
+    - .composer-cache/
+
+install:
+  stage: prepare
+  script:
+    - composer install --no-interaction --no-progress --prefer-dist
+  artifacts:
+    paths:
+      - vendor/
+    expire_in: 1 hour
+
+cs-fixer:
+  stage: quality
+  needs: ["install"]
+  script:
+    - composer cs
+
+rector:
+  stage: quality
+  needs: ["install"]
+  script:
+    - composer rector
+
+phpunit:
+  stage: test
+  needs: ["install"]
+  script:
+    - vendor/bin/phpunit --coverage-text --colors=never
